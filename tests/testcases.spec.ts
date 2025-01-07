@@ -1,61 +1,62 @@
 import { test, expect } from '@playwright/test';
 import { MyAccountPage } from './pages/myAccountPage';
+import { NavigationPage } from './pages/navigationPage';
+import { ShopPage } from './pages/shopPage';
+import { CartPage } from './pages/cartPage';
 
 
     test('Test Case 1', async ({ page }) => {
         //Setup
         await page.goto('https://www.edgewordstraining.co.uk/demo-site/my-account/');
         const myAccountPage = new MyAccountPage(page);
-        myAccountPage.dismissBanner();
+        await myAccountPage.dismissBanner();
         //1- Log in to an account
-        myAccountPage.login('magmortar@pmail.com', 'octoberComic0n!?');
+        await myAccountPage.login('magmortar@pmail.com', 'octoberComic0n!?');
         //2- Enter the shop
-        await page.locator('#menu-item-43').getByRole('link', { name: 'Shop' }).click();
+        const navigationPage = new NavigationPage(page);
+        await navigationPage.goShop();
         //3- Add a clothing item to the cart
-        await page.getByLabel('Add “Belt” to your cart').click();
+        const shopPage = new ShopPage(page);
+        await shopPage.addBeltToCart();
         //4- View the cart
-        await page.getByRole('link', { name: 'View cart ' }).click();
+        await navigationPage.goCart();
         //5- Apply a coupon 'edgewords'
-        //await page.getByPlaceholder('Coupon code').click();
-        await page.getByPlaceholder('Coupon code').fill('edgewords');
-        await page.getByRole('button', { name: 'Apply coupon' }).click();
-
+        const cartPage = new CartPage(page);
+        await cartPage.applyCouponCode('edgewords');
         //6- Check that the coupon is valid for a 15% discount
-
-
-
+        let rawText1 = await cartPage.discountAmount.textContent();
+        let rawText2 = await cartPage.subtotalAmount.textContent();
+        let rawText3 = await cartPage.shippingAmount.textContent();
+        let discountAmount = await cartPage.getPrice(rawText1);
+        let subtotalAmount = await cartPage.getPrice(rawText2);
+        let shippingAmount = await cartPage.getPrice(rawText3);
+        let actualDiscount = await cartPage.getActualDiscount(subtotalAmount, discountAmount);
+        await expect(actualDiscount).toEqual(0.85);
         //7- Check that the total after shipping has been calculated correctly
-
-
-
+        let rawText4 = await cartPage.totalAmount.textContent();
+        let actualTotal = await cartPage.getActualTotal(subtotalAmount, discountAmount, shippingAmount);
+        rawText4 = await cartPage.preserveNumbers(rawText4);
+        await expect(actualTotal).toEqual(parseFloat(rawText4));
         //8- Log out
-        const discountAmount = await page.getByRole('cell', { name: /-£\d+(\.\d{1,2})? \[Remove\]/ }).textContent();
-        const subtotalAmount = await page.getByRole('row', { name: 'Subtotal £' }).locator('bdi').textContent();
-        const shippingAmount = await page.getByText('Flat rate: £').textContent();
-        
-        console.log(discountAmount);
-        console.log(subtotalAmount);
-        console.log(shippingAmount);
-
-
-        await page.locator('#menu-item-46').getByRole('link', { name: 'My account' }).click();
-        await page.getByRole('link', { name: 'Log out' }).click();
+        await navigationPage.goMyAccount();
+        await myAccountPage.logout();
     }),  
 
     test('Test Case 2', async ({ page }) => {
         //Setup
         await page.goto('https://www.edgewordstraining.co.uk/demo-site/my-account/');
-        await page.getByRole('link', { name: ' Dismiss' }).click();
+        const myAccountPage = new MyAccountPage(page);
+        await myAccountPage.dismissBanner();
         //1- Log in to an account
-        await page.getByLabel('Username or email address *').fill('magmortar@pmail.com');
-        await page.locator('#password').fill('octoberComic0n!?');
-        await page.getByRole('button', { name: 'Log in' }).click();
+        await myAccountPage.login('magmortar@pmail.com', 'octoberComic0n!?');
         //2- Enter the shop
-        await page.locator('#menu-item-43').getByRole('link', { name: 'Shop' }).click();
+        const navigationPage = new NavigationPage(page);
+        await navigationPage.goShop();
         //3- Add a clothing item to the cart
-        await page.getByLabel('Add “Belt” to your cart').click();
+        const shopPage = new ShopPage(page);
+        await shopPage.addBeltToCart();
         //4- View the cart
-        await page.getByRole('link', { name: 'View cart ' }).click();
+        await navigationPage.goCart();
         //5- Proceed to checkout
 
         //6- Enter Billing Details
