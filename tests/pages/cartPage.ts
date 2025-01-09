@@ -44,9 +44,9 @@ export class CartPage{
         return (subtotal - discount) + shipping;
     }
     
-    async preserveNumbers(rawText){
-        let output = rawText.replace(/[£,]/g, "");
-        return output
+    async preserveNumbers(rawText) {
+        let output = rawText.replace(/[^0-9.]/g, ""); // Removes anything that's not a digit or decimal point
+        return output;
     }
     
     

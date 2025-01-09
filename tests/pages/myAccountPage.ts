@@ -7,6 +7,7 @@ export class MyAccountPage{
     readonly loginButton: Locator;
     readonly dismissButton: Locator;
     readonly logoutButton: Locator;
+    readonly orderLink: Locator;
 
     constructor (page: Page){
         this.page = page;
@@ -15,6 +16,7 @@ export class MyAccountPage{
         this.loginButton = page.getByRole('button', { name: 'Log in' });
         this.dismissButton = page.getByRole('link', { name: ' Dismiss' });
         this.logoutButton = page.getByRole('link', { name: 'Log out' });
+        this.orderLink = page.getByRole('link', { name: ' Orders' });
     }
 
     async login(username, password){
@@ -27,5 +29,8 @@ export class MyAccountPage{
     }
     async logout(){
         await this.logoutButton.click();
+    }
+    async goOrders(){
+        await this.orderLink.click();
     }
 }

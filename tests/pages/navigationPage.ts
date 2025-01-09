@@ -12,6 +12,7 @@ export class NavigationPage{
         this.myAccountLink = page.locator('#menu-item-46').getByRole('link', { name: 'My account' });
         this.cartLink = page.getByRole('link', { name: 'View cart ' });
         this.shopLink = page.locator('#menu-item-43').getByRole('link', { name: 'Shop' });
+        this.checkoutLink = page.locator('#menu-item-45').getByRole('link', { name: 'Checkout' })
     }
 
     async goMyAccount(){
@@ -22,5 +23,8 @@ export class NavigationPage{
     }
     async goShop(){
         await this.shopLink.click();
+    }
+    async goCheckout(){
+        await this.checkoutLink.click();
     }
 }
