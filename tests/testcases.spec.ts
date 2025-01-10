@@ -25,10 +25,11 @@ import { OrderPage } from './pages/orderPage';
         console.log('Added belt item to cart');
         //4- View the cart
         await navigationPage.goCart();
-        console.log('Navigated to cart page');
+        console.log('Navigated to cart page');  
     });
 
     test.afterEach(async ({ page }) => {
+        //Finally, log out
         const myAccountPage = new MyAccountPage(page);
         const navigationPage = new NavigationPage(page);
         await navigationPage.goMyAccount();
@@ -41,25 +42,8 @@ import { OrderPage } from './pages/orderPage';
 
 
     test('Test Case 1', async ({ page }) => {
-        //Setup
-        // await page.goto('https://www.edgewordstraining.co.uk/demo-site/my-account/');
         const myAccountPage = new MyAccountPage(page);
-        // await myAccountPage.dismissBanner();
-        // //1- Log in to an account
-        // await myAccountPage.login('magmortar@pmail.com', 'octoberComic0n!?');
-        // console.log('Logged In');
-        // //2- Enter the shop
         const navigationPage = new NavigationPage(page);
-        // await navigationPage.goShop();
-        // console.log('Navigated to shop page');
-        // //3- Add a clothing item to the cart
-        // const shopPage = new ShopPage(page);
-        // await shopPage.addBeltToCart();
-        // console.log('Added belt item to cart');
-        // //4- View the cart
-        // await navigationPage.goCart();
-        // console.log('Navigated to cart page');
-        //5- Apply a coupon 'edgewords'
         const cartPage = new CartPage(page);
         await cartPage.applyCouponCode('edgewords');
         console.log('Applied the coupon: edgewords');
@@ -81,32 +65,11 @@ import { OrderPage } from './pages/orderPage';
         console.log('The total after shipping is listed as £' + rawText4 + ' and the actual total after shipping is £' + actualTotal);
         await expect(actualTotal).toEqual(parseFloat(rawText4));
         console.log('The total after shipping is calculated correctly');
-        //8- Log out
-        // await navigationPage.goMyAccount();
-        // console.log('Navigated to my account page');
-        // await myAccountPage.logout();
-        // console.log('Logged out, end of test');
     }),  
 
     test('Test Case 2', async ({ page }) => {
-        //Setup
-        // await page.goto('https://www.edgewordstraining.co.uk/demo-site/my-account/');
         const myAccountPage = new MyAccountPage(page);
-        // await myAccountPage.dismissBanner();
-        // //1- Log in to an account
-        // await myAccountPage.login('magmortar@pmail.com', 'octoberComic0n!?');
-        // console.log('Logged In');
-        // //2- Enter the shop
         const navigationPage = new NavigationPage(page);
-        // await navigationPage.goShop();
-        // console.log('Navigated to shop page');
-        // //3- Add a clothing item to the cart
-        // const shopPage = new ShopPage(page);
-        // await shopPage.addBeltToCart();
-        // console.log('Added belt item to cart');
-        // //4- View the cart
-        // await navigationPage.goCart();
-        // console.log('Navigated to cart page');
         const cartPage = new CartPage(page);
         //5- Proceed to checkout
         await navigationPage.goCheckout();
@@ -134,10 +97,5 @@ import { OrderPage } from './pages/orderPage';
         console.log('The top order on the order history page is #' + orderNum2);
         await expect(orderNum1).toEqual(orderNum2);
         console.log('The order numbers match');
-        //12- Logout
-        // await navigationPage.goMyAccount();
-        // console.log('Navigated to my account page');
-        // await myAccountPage.logout();
-        // console.log('Logged out, end of test');
     });
 
