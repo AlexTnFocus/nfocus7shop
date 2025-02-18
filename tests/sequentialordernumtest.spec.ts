@@ -6,6 +6,7 @@ import { CartPage } from './pages/cartPage';
 import { CheckoutPage } from './pages/checkoutPage';
 import { OrderRecievedPage } from './pages/orderReceivedPage';
 import { OrderPage } from './pages/orderPage';
+import { HelperLib } from './pages/helperlib';
 
 test('Check that the past three orders in the order history have sequential numbering', async ({ page }) => {
     await page.goto('https://www.edgewordstraining.co.uk/demo-site/my-account/');
@@ -17,19 +18,27 @@ test('Check that the past three orders in the order history have sequential numb
     //2. Navigate to order history
     await myAccountPage.goOrders();         //Navigates to the My Account -> Orders page
     //3. Fetch the last three order numbers
-    let orderNum1 = page.locator("tbody tr:nth-child(1) td:nth-child(1) a:nth-child(1)");
-    let orderNum2 = page.locator("tbody tr:nth-child(1) td:nth-child(1) a:nth-child(1)");
+    //Consolidate this step to use a function for fetching items from the order history table to cut down on code
+    //
+    const helperLib = new HelperLib(page);
+    let orderNum1 = await page.locator("tbody tr:nth-child(1) td:nth-child(1) a:nth-child(1)").textContent();
+    orderNum1 = await helperLib.preserveNumbers(orderNum1);
+    let orderInt1 = await Number(orderNum1);
+    console.log(orderInt1);
+    let orderNum2 = await page.locator("tbody tr:nth-child(2) td:nth-child(1) a:nth-child(1)").textContent();
+    orderNum2 = await helperLib.preserveNumbers(orderNum2);
+    let orderInt2 = await Number(orderNum2);
+    console.log(orderInt2);
+    let orderNum3 = await page.locator("tbody tr:nth-child(3) td:nth-child(1) a:nth-child(1)").textContent();
+    orderNum3 = await helperLib.preserveNumbers(orderNum3);
+    let orderInt3 = await Number(orderNum3);
+    console.log(orderInt3);
     //4. Check that the order numbers use a sequential numbering system
+    await expect(orderInt1).toEqual(orderInt2 + 1);
     //5. Navigate to my account
-    //6. Finally, logawait page.getByRole('link', { name: ' Dismiss' }).click();
-    await page.getByLabel('Username or email address *').click();
-    await page.getByLabel('Username or email address *').click();
-    await page.locator('#password').click();
-    await page.getByRole('link', { name: ' Orders' }).click();
-    await page.getByRole('cell', { name: 'Order' }).click();
-    await page.getByRole('cell', { name: '#15587' }).click();
-    await page.getByRole('cell', { name: '#15586' }).click();
-    await page.getByRole('cell', { name: '#15570' }).click();
-
+    const navigationPage = new NavigationPage(page);
+    await navigationPage.goMyAccount();
+    //6. Finally, logout
+    await myAccountPage.logout();
 });
 
